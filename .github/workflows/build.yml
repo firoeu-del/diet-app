@@ -1,0 +1,31 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+
+      - name: Install Flet
+        run: pip install flet==0.24.0
+
+      - name: Build APK
+        run: flet build apk diet.py --no-rich-output
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: diet-apk
+          path: build/apk/app-release.apk
