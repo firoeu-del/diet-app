@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رژیم‌نویسی بر اساس وزن ایده‌آل (IBW / AIBW)</title>
+<title>Dietrix | رژیم‌نویسی بر اساس وزن ایده‌آل</title>
 <meta name="theme-color" content="#6A4BD4">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="font.css">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" href="icon.svg">
 <style>
-  /* فونت کاملاً آفلاین: از فونت‌های فارسی نصب‌شده روی دستگاه استفاده می‌شود */
   :root{
     color-scheme:light;
     --text:#23222B; --text2:#63616F;
@@ -63,7 +63,7 @@
   html{scroll-behavior:smooth;}
   @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{transition:none!important; animation:none!important;} }
   body{
-    font-family:"Vazirmatn","Vazir","IRANSans","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+    font-family:"IRANSansDN","Vazirmatn","Vazir","IRANSans","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
     color:var(--text); font-size:16px; line-height:1.7;
     min-height:100vh; padding:32px 16px 72px;
     background:var(--bg-grad);
@@ -197,6 +197,21 @@
   /* ---------- Results ---------- */
   #results{display:none; margin-top:36px;}
   #results.show{display:block; animation:fadeIn .45s ease;}
+
+  /* ---------- Section filter ---------- */
+  .res-filter{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:12px 16px; border-radius:16px;}
+  .rf-title{font-size:13.5px; font-weight:800; color:var(--text2); margin-inline-end:4px;}
+  .f-chip{
+    font:inherit; font-size:13.5px; font-weight:700; color:var(--text2); cursor:pointer;
+    background:var(--seg-bg); border:1px solid var(--glass-border); border-radius:999px;
+    padding:7px 14px; min-height:38px;
+    transition:all .2s ease;
+  }
+  .f-chip:hover{transform:translateY(-2px); border-color:var(--hover-border); color:var(--accent);}
+  .f-chip.active{background:var(--btn-grad); color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(90,80,210,.35);}
+  .res-sec{display:none;}
+  .res-sec.show{display:block; animation:fadeIn .35s ease;}
+  .res-sec .section-title:first-child{margin-top:32px;}
   @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
   .section-title{font-size:21px; font-weight:800; margin:44px 0 18px; display:flex; align-items:center; gap:12px;}
   .section-title:first-child{margin-top:0;}
@@ -357,7 +372,7 @@
 
   <header>
     <div class="badge"><svg class="ico"><use href="#i-spark"/></svg> محاسبه‌گر هوشمند رژیم غذایی</div>
-    <h1>رژیم‌نویسی بر اساس وزن ایده‌آل</h1>
+    <h1>Dietrix</h1>
     <p>وزن ایده‌آل (IBW) و وزن تعدیل‌شده (AIBW) شما محاسبه می‌شود، کالری روزانه بر اساس آن تعیین شده و یک برنامه‌ی وعده‌ها و واحدهای غذایی متناسب ارائه می‌شود.</p>
   </header>
 
@@ -373,11 +388,13 @@
         </div>
       </div>
       <div class="field">
-        <label for="goal"><svg class="ico"><use href="#i-target"/></svg> هدف <span class="hint">(میزان کاهش وزن ماهانه)</span></label>
+        <label for="goal"><svg class="ico"><use href="#i-target"/></svg> هدف <span class="hint">(کاهش یا افزایش وزن ماهانه)</span></label>
         <select id="goal">
           <option value="0">تثبیت وزن (بدون کسر کالری)</option>
           <option value="700">کاهش ۳ کیلوگرم در ماه (−۷۰۰ کالری)</option>
           <option value="1000" selected>کاهش ۴ کیلوگرم در ماه (−۱۰۰۰ کالری)</option>
+          <option value="-500">افزایش ۲ کیلوگرم در ماه (+۵۰۰ کالری)</option>
+          <option value="-700">افزایش ۳ کیلوگرم در ماه (+۷۰۰ کالری)</option>
         </select>
       </div>
       <div class="field">
@@ -404,7 +421,18 @@
 
   <div id="results">
 
-    <h2 class="section-title" style="margin-top:44px;"><span class="ic"><svg class="ico"><use href="#i-chart"/></svg></span> نتایج محاسبه</h2>
+    <div class="res-filter glass" id="resFilter" aria-label="انتخاب بخش‌های نمایش">
+      <span class="rf-title">🔍 نمایش بخش‌ها:</span>
+      <button type="button" class="f-chip active" data-sec="stats">📊 نتایج</button>
+      <button type="button" class="f-chip" data-sec="macros">⚡ درشت‌مغذی‌ها</button>
+      <button type="button" class="f-chip" data-sec="units">🧩 واحدهای غذایی</button>
+      <button type="button" class="f-chip" data-sec="meals">🍽 وعده‌ها</button>
+      <button type="button" class="f-chip" data-sec="ref">📖 راهنمای واحدها</button>
+      <button type="button" class="f-chip" data-sec="all">✅ همه</button>
+    </div>
+
+    <section class="res-sec show" data-sec="stats">
+    <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-chart"/></svg></span> نتایج محاسبه</h2>
     <div class="stats">
       <div class="stat glass"><div class="top"><svg class="ico"><use href="#i-award"/></svg> وزن ایده‌آل (IBW)</div><div class="val" id="outIbw">—</div><div class="unit">کیلوگرم</div></div>
       <div class="stat glass"><div class="top"><svg class="ico"><use href="#i-scale"/></svg> <span id="basisLbl">وزن مبنای محاسبه</span></div><div class="val" id="outBasis">—</div><div class="unit">کیلوگرم</div></div>
@@ -413,7 +441,9 @@
     </div>
     <div class="note glass" id="basisNote"></div>
     <div class="note warn" id="floorNote" style="display:none;">⚠️ کالری محاسبه‌شده کمتر از ۱۰۰۰ کیلوکالری بود؛ برای حفظ سلامت، برنامه روی حداقل ۱۰۰۰ کیلوکالری تنظیم شد.</div>
+    </section>
 
+    <section class="res-sec" data-sec="macros">
     <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-zap"/></svg></span> درشت‌مغذی‌های روزانه</h2>
     <div class="macro-ctrl glass">
       <span class="mc-title">⚙️ تنظیم درصدها:</span>
@@ -428,15 +458,22 @@
       <div class="stat glass"><div class="top">🍗 پروتئین (<span id="proPct">۱۷</span>٪)</div><div class="val" id="outPro">—</div><div class="unit">گرم در روز</div></div>
       <div class="stat glass"><div class="top">🥑 چربی (<span id="fatPct">۳۰</span>٪)</div><div class="val" id="outFat">—</div><div class="unit">گرم در روز</div></div>
     </div>
+    </section>
 
+    <section class="res-sec" data-sec="units">
     <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-grid"/></svg></span> واحدهای غذایی روزانه <span class="hint" id="planLabel"></span></h2>
     <div class="totals" id="totals"></div>
+    </section>
 
+    <section class="res-sec" data-sec="meals">
     <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-plate"/></svg></span> برنامه وعده‌های غذایی</h2>
     <div class="meals" id="meals"></div>
+    </section>
 
+    <section class="res-sec" data-sec="ref">
     <h2 class="section-title"><span class="ic"><svg class="ico"><use href="#i-book"/></svg></span> هر واحد غذایی یعنی چقدر؟</h2>
     <div class="ref" id="refCards"></div>
+    </section>
 
     <details class="formulas glass">
       <summary><svg class="ico"><use href="#i-info"/></svg> فرمول‌های استفاده‌شده در محاسبه</summary>
@@ -445,6 +482,7 @@
         <p><b>وزن تعدیل‌شده (AIBW):</b> اگر وزن فعلی بیشتر از وزن ایده‌آل باشد: AIBW = IBW + (وزن فعلی − IBW) ÷ ۳</p>
         <p><b>انرژی نگهدارنده (E):</b> وزن مبنا × ۲۴ (خانم‌ها × ۰٫۹) × ۱٫۱ × ضریب فعالیت (۱٫۲ تا ۱٫۵)</p>
         <p><b>کسر کالری برای کاهش وزن:</b> کاهش ۳ کیلو در ماه → ۷۰۰− کالری | کاهش ۴ کیلو در ماه → ۱۰۰۰− کالری</p>
+        <p><b>افزودن کالری برای افزایش وزن:</b> افزایش ۲ کیلو در ماه → ۵۰۰+ کالری | افزایش ۳ کیلو در ماه → ۷۰۰+ کالری</p>
         <p><b>درشت‌مغذی‌ها:</b> پیش‌فرض ۵۳٪ کربوهیدرات و ۱۷٪ پروتئین (هر گرم ۴ کالری) | ۳۰٪ چربی (هر گرم ۹ کالری) — درصدها از بخش «تنظیم درصدها» قابل تغییر است</p>
       </div>
     </details>
@@ -460,6 +498,7 @@
     <h2 class="section-title"><span class="ic">🕘</span> تاریخچه محاسبات <button type="button" class="hist-clear" id="histClear">🗑 پاک کردن همه</button></h2>
     <div class="hist glass" id="histList"></div>
   </div>
+
 </div>
 
 <script>
@@ -510,7 +549,9 @@ const PLANS = {
   1800:{b:{bread:2,milk:1,meat:1,fat:1}, ms:{bread:1,fruit:1}, l:{bread:3,meat:2,veg:2,fat:2}, me:{milk:1,fruit:1}, d:{bread:2,meat:2,veg:3,fat:1}, mn:{milk:1,fruit:2}},
   2000:{b:{bread:3,milk:1,meat:1,fat:1}, ms:{bread:1,fruit:1}, l:{bread:3,meat:3,veg:2,fat:2}, me:{milk:1,fruit:1}, d:{bread:2,meat:2,veg:3,fat:2}, mn:{milk:1,fruit:2}},
   2200:{b:{bread:3,milk:1,meat:1,fat:1,fruit:1}, ms:{bread:1,fruit:1}, l:{bread:3,meat:3,veg:2,fat:2}, me:{bread:1,milk:1,fruit:1}, d:{bread:2,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}},
-  2500:{b:{bread:3,milk:1,meat:2,fat:1,fruit:1}, ms:{bread:2,fruit:1}, l:{bread:4,meat:3,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:2,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}}
+  2500:{b:{bread:3,milk:1,meat:2,fat:1,fruit:1}, ms:{bread:2,fruit:1}, l:{bread:4,meat:3,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:2,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}},
+  2800:{b:{bread:3,milk:1,meat:2,fat:2,fruit:1}, ms:{bread:2,fruit:1,fat:1}, l:{bread:4,meat:4,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:3,meat:3,veg:3,fat:3}, mn:{milk:1,fruit:2}},
+  3000:{b:{bread:4,milk:1,meat:2,fat:2,fruit:1}, ms:{bread:2,fruit:1,fat:1}, l:{bread:4,meat:4,veg:3,fat:3}, me:{bread:1,milk:1,fruit:1}, d:{bread:3,meat:3,veg:3,fat:3}, mn:{bread:1,milk:1,fruit:2}}
 };
 
 const fa = n => Math.round(n).toLocaleString("fa-IR");
@@ -581,7 +622,7 @@ document.getElementById("dietForm").addEventListener("submit", function(e){
   document.getElementById("outBasis").textContent = fa(basis);
   document.getElementById("outMaint").textContent = fa(maint);
   document.getElementById("outTarget").textContent = fa(target);
-  document.getElementById("basisNote").textContent = "💡 " + basisNote + " انرژی نگهدارنده = " + fa(basis) + (gender==="male" ? " × ۲۴" : " × ۲۴ × ۰٫۹") + " × ۱٫۱ × " + activity.toLocaleString("fa-IR") + " = " + fa(maint) + " کیلوکالری." + (deficit>0 ? " برای هدف کاهش وزن، " + fa(deficit) + " کیلوکالری از آن کم شد." : "");
+  document.getElementById("basisNote").textContent = "💡 " + basisNote + " انرژی نگهدارنده = " + fa(basis) + (gender==="male" ? " × ۲۴" : " × ۲۴ × ۰٫۹") + " × ۱٫۱ × " + activity.toLocaleString("fa-IR") + " = " + fa(maint) + " کیلوکالری." + (deficit>0 ? " برای هدف کاهش وزن، " + fa(deficit) + " کیلوکالری از آن کم شد." : (deficit<0 ? " برای هدف افزایش وزن، " + fa(-deficit) + " کیلوکالری به آن اضافه شد." : ""));
   document.getElementById("floorNote").style.display = floored ? "block" : "none";
 
   // درشت‌مغذی‌ها بر اساس درصدهای قابل‌تنظیم
@@ -589,7 +630,7 @@ document.getElementById("dietForm").addEventListener("submit", function(e){
   renderMacros();
 
   // ثبت در تاریخچه
-  const goalLbl = deficit===0 ? "تثبیت وزن" : (deficit===700 ? "کاهش ۳ کیلو (−۷۰۰)" : "کاهش ۴ کیلو (−۱۰۰۰)");
+  const goalLbl = deficit===0 ? "تثبیت وزن" : (deficit===700 ? "کاهش ۳ کیلو (−۷۰۰)" : (deficit===1000 ? "کاهش ۴ کیلو (−۱۰۰۰)" : (deficit===-500 ? "افزایش ۲ کیلو (+۵۰۰)" : "افزایش ۳ کیلو (+۷۰۰)")));
   const histArr = getHist();
   histArr.unshift({ts: Date.now(), gender, h, w, act: activity, goalLbl, ibw, basis, maint, target});
   if(histArr.length > 15) histArr.length = 15;
@@ -723,6 +764,43 @@ document.getElementById("histClear").addEventListener("click", () => {
 });
 renderHist();
 
+// ---------- فیلتر بخش‌های نتایج ----------
+const ALL_SECS = ["stats","macros","units","meals","ref"];
+function getFilters(){
+  try{
+    const s = JSON.parse(localStorage.getItem("diet-filters"));
+    if(Array.isArray(s) && s.length) return s.filter(x=>ALL_SECS.includes(x));
+  }catch(e){}
+  return ["stats"];
+}
+function setFilters(arr){
+  try{ localStorage.setItem("diet-filters", JSON.stringify(arr)); }catch(e){}
+  renderFilters(arr);
+}
+function renderFilters(active){
+  document.querySelectorAll("#resFilter .f-chip").forEach(b=>{
+    if(b.dataset.sec==="all"){ b.classList.toggle("active", active.length===ALL_SECS.length); return; }
+    b.classList.toggle("active", active.includes(b.dataset.sec));
+  });
+  document.querySelectorAll(".res-sec").forEach(s=>{
+    s.classList.toggle("show", active.includes(s.dataset.sec));
+  });
+}
+document.getElementById("resFilter").addEventListener("click",(e)=>{
+  const b = e.target.closest(".f-chip");
+  if(!b) return;
+  let act = getFilters();
+  if(b.dataset.sec==="all"){
+    act = act.length===ALL_SECS.length ? ["stats"] : ALL_SECS.slice();
+  } else if(act.includes(b.dataset.sec)){
+    act = act.filter(x=>x!==b.dataset.sec);
+    if(!act.length) act = ["stats"];
+  } else {
+    act.push(b.dataset.sec);
+  }
+  setFilters(act);
+});
+renderFilters(getFilters());
 
 // ---------- PWA: service worker ----------
 if ("serviceWorker" in navigator) {
